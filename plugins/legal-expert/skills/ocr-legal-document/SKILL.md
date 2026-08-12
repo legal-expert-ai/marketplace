@@ -17,10 +17,10 @@ Read [references/ocr-task-contract.md](references/ocr-task-contract.md) before s
 
 ## Prepare the source
 
-1. Inspect advertised MCP tools and resolve exactly one PDF already present in a creator-owned ready Legal Expert document bundle. Preview v1 does not accept local paths, attachments, arbitrary URLs, or upload handles directly.
+1. Inspect advertised MCP tools and resolve exactly one PDF already present in a creator-owned ready Legal Expert document bundle. The current MCP contract does not accept local paths, attachments, arbitrary URLs, or upload handles directly.
 2. Preserve the surrounding bundle identity. OCR operates on the selected file; it must not split the file into a new library bundle or detach it from its contract family.
 3. Identify encrypted, malformed, oversized or unsupported input before consuming credits where possible.
-4. Explain that preview v1 does not expose an output-format selector. Report whichever visible artifacts the server produces.
+4. Explain that the current MCP contract does not expose an output-format selector. Report whichever visible artifacts the server produces.
 
 ## Run and monitor OCR
 

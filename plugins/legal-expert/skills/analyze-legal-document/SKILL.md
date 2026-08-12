@@ -17,7 +17,7 @@ Read [references/analysis-task-contract.md](references/analysis-task-contract.md
 
 ## Establish the review
 
-1. Inspect advertised MCP tools and resolve the exact ready bundle, document, and version. Preview v1 accepts only a file already present in a creator-owned Legal Expert bundle. If the required task tool is absent, stop and report that capability gap.
+1. Inspect advertised MCP tools and resolve the exact ready bundle, document, and version. The current MCP contract accepts only a file already present in a creator-owned Legal Expert bundle. If the required task tool is absent, stop and report that capability gap.
 2. Select one primary document per review task. Preserve its `bundle_id`, `file_id`, filename, version and checksum when supplied.
 3. Establish:
    - depth: `quick`, `standard` or `deep`;

@@ -10,9 +10,9 @@
 - `read_agent_task_output_base64(task_id, output_id, byte_offset=0, byte_limit=196608)` reads any visible output as base64 chunks; `byte_limit` is at most 262,144. It returns `filename`, `mime_type`, `encoding`, `content_base64`, full-file `sha256`, `total_bytes`, and `next_byte_offset`. Follow byte offsets until null and verify the assembled bytes against `sha256`.
 - `cancel_agent_task(task_id)` requests cancellation.
 
-The source must be exactly one authorized PDF selected by `bundle_id` and `file_id` from a creator-owned ready bundle. File bytes, base64, upload handles, arbitrary remote URLs and local paths are forbidden in preview-v1 JSON-RPC arguments.
+The source must be exactly one authorized PDF selected by `bundle_id` and `file_id` from a creator-owned ready bundle. File bytes, base64, upload handles, arbitrary remote URLs and local paths are forbidden in MCP JSON-RPC arguments.
 
-The backend agent splits pages, OCRs and verifies them, combines a self-contained `final.html`, and may generate `final.docx`. Preview v1 does not accept an output-format selector. If a page cannot be completed after retry policy, the task fails instead of returning an apparently complete partial document.
+The backend agent splits pages, OCRs and verifies them, combines a self-contained `final.html`, and may generate `final.docx`. The current MCP contract does not accept an output-format selector. If a page cannot be completed after retry policy, the task fails instead of returning an apparently complete partial document.
 
 ## Authorization and billing
 

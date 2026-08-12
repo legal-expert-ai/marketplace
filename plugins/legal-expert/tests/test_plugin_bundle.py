@@ -32,12 +32,12 @@ class PluginBundleTest(unittest.TestCase):
         server = payload["mcpServers"]["legal-expert"]
         self.assertEqual({"type", "url"}, set(server))
         self.assertEqual("http", server["type"])
-        self.assertEqual("https://replace-with-production-mcp-host.invalid/mcp", server["url"])
+        self.assertEqual("https://legal-expert-backend-feat-public-mcp-agent-tasks.docker.d.com.ro/mcp", server["url"])
         self.assertFalse((ROOT / "scripts" / "mcp_http_bridge.py").exists())
 
     def test_manifest_uses_windows_oauth_release_semver(self) -> None:
         payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
-        self.assertRegex(payload["version"], r"^0\.3\.0\+codex\.\d{14}$")
+        self.assertEqual("0.3.0-beta.1", payload["version"])
 
     def test_all_skills_distinguish_connection_failures(self) -> None:
         validator = load_module(ROOT / "scripts" / "validate_plugin_bundle.py", "bundle_diagnostics_validator")

@@ -22,7 +22,7 @@ Read [references/contract-changes-task-contract.md](references/contract-changes-
 
 Resolve source roles explicitly. For files in a Legal Expert bundle, preserve `bundle_id`, both `file_id` values, versions and checksums. Do not infer original/modified order from upload order alone when filenames or metadata conflict.
 
-Preview v1 accepts only files in the same creator-owned ready bundle. Inspect advertised tools first; if `start_contract_changes_review` is absent, stop and report the capability gap.
+The current MCP contract accepts only files in the same creator-owned ready bundle. Inspect advertised tools first; if `start_contract_changes_review` is absent, stop and report the capability gap.
 
 If multiple amendments or versions exist, show the proposed comparison pair and ask only when the choice changes the legal meaning. Do not fan out several paid comparisons without the user's authorization.
 

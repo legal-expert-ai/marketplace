@@ -2,7 +2,7 @@
   "mcpServers": {
     "legal-expert": {
       "type": "http",
-      "url": "https://replace-with-production-mcp-host.invalid/mcp"
+      "url": "https://legal-expert-backend-feat-public-mcp-agent-tasks.docker.d.com.ro/mcp"
     }
   }
 }

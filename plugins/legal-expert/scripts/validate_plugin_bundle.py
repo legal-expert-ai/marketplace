@@ -55,7 +55,7 @@ OAUTH_DIAGNOSTIC_MARKERS = (
     "**Unauthorized:**",
     "**Missing tool:**",
 )
-FAIL_CLOSED_MCP_URL = "https://replace-with-production-mcp-host.invalid/mcp"
+FAIL_CLOSED_MCP_URL = "https://legal-expert-backend-feat-public-mcp-agent-tasks.docker.d.com.ro/mcp"
 SEMVER_PATTERN = re.compile(
     r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
     r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"

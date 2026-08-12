@@ -22,7 +22,7 @@ Select exactly:
 - one approved `.doc` or `.docx` source; and
 - one signed `.pdf` source.
 
-Preview v1 accepts only authorized files from the same creator-owned ready Legal Expert document bundle. Preserve their bundle/file IDs, versions and checksums. Never guess which draft was approved when several versions exist; ask for the exact pair if that choice affects the verdict. Inspect advertised tools first and stop with a capability-gap explanation if the verification tool is absent.
+The current MCP contract accepts only authorized files from the same creator-owned ready Legal Expert document bundle. Preserve their bundle/file IDs, versions and checksums. Never guess which draft was approved when several versions exist; ask for the exact pair if that choice affects the verdict. Inspect advertised tools first and stop with a capability-gap explanation if the verification tool is absent.
 
 ## Run and monitor
 

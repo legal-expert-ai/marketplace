@@ -10,7 +10,7 @@ The mode-specific file selection is one of:
 - `{mode: "versions", original_file_id, modified_file_id}`;
 - `{mode: "track_changes", tracked_file_id}`.
 
-All selected file IDs belong to the same creator-owned ready `bundle_id`. Never accept upload handles, local paths, arbitrary URLs, bytes or base64 in preview v1.
+All selected file IDs belong to the same creator-owned ready `bundle_id`. Never accept upload handles, local paths, arbitrary URLs, bytes or base64 in the current MCP contract.
 
 `get_agent_task_output` returns safe visible-output metadata. Use `read_agent_task_output_content` for bounded UTF-8 report pages. `read_agent_task_output_base64(task_id, output_id, byte_offset=0, byte_limit=196608)` reads any visible output as base64 chunks; `byte_limit` is at most 262,144. It returns `filename`, `mime_type`, `encoding`, `content_base64`, full-file `sha256`, `total_bytes`, and `next_byte_offset`. Follow byte offsets until null and verify the assembled bytes against `sha256`.
 
