@@ -10,18 +10,18 @@ Legal Expert ajută profesioniștii juridici să cerceteze legislația română,
 
 Backendul Legal Expert și serverul MCP rulează în cloud. Pe calculatorul clientului se instalează doar pluginul cu skill-urile și conexiunea OAuth. Nu sunt necesare PHP, Docker, Node.js, Python sau un serviciu Legal Expert local.
 
-## Instalare early access pe Windows
+## Instalare beta pe Windows
 
 În PowerShell:
 
 ```powershell
-codex plugin marketplace add mincua/legal-expert-plugin --ref stable
+codex plugin marketplace add mincua/legal-expert-plugin
 codex plugin add legal-expert@legal-expert
 ```
 
 Deschideți apoi o conversație nouă, selectați Legal Expert și autentificați-vă în contul Legal Expert când apare fereastra OAuth.
 
-Canalul `stable` este publicat numai după ce versiunea trece verificările OAuth și testele MCP. Până atunci, instalarea este intenționat indisponibilă.
+Canalul `main` livrează versiunea beta verificată automat pe Linux și Windows. Canalul `stable` este promovat numai după verificarea live a OAuth-ului și a tuturor tool-urilor MCP.
 
 ## Actualizare
 
