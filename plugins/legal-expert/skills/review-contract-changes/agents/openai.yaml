@@ -1,0 +1,6 @@
+interface:
+  display_name: "Review Contract Changes"
+  short_description: "Analyze redlines with legal recommendations"
+  default_prompt: "Use $review-contract-changes to compare these contract versions and prioritize the risky changes."
+policy:
+  allow_implicit_invocation: true

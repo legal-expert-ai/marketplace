@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Legal Library"
+  short_description: "Upload and manage legal document bundles"
+  default_prompt: "Use $manage-legal-library to upload these documents, review extracted events, and configure notifications safely."

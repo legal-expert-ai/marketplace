@@ -1,0 +1,6 @@
+interface:
+  display_name: "Verify Signed Document"
+  short_description: "Compare an approved draft with its signed PDF"
+  default_prompt: "Use $verify-signed-document to verify this signed PDF against the approved DOCX draft."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "OCR Legal Document"
+  short_description: "Convert and verify scanned legal PDFs"
+  default_prompt: "Use $ocr-legal-document to convert this scanned PDF into verified navigable HTML."
+policy:
+  allow_implicit_invocation: true

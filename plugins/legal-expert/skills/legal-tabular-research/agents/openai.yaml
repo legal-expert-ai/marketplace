@@ -1,0 +1,6 @@
+interface:
+  display_name: "Legal Tabular Research"
+  short_description: "Analyze legal document sets into auditable Excel"
+  default_prompt: "Use $legal-tabular-research to analyze this document set and complete an auditable Excel workbook."
+policy:
+  allow_implicit_invocation: true

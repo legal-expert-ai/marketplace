@@ -1,0 +1,40 @@
+{
+  "name": "legal-expert",
+  "version": "0.3.0+codex.20260812164012",
+  "description": "Research Romanian law, manage subscribed document libraries, run legal analysis, OCR and comparison workflows, and build auditable Excel tables.",
+  "author": {
+    "name": "Legal Expert",
+    "url": "https://legal-hints.ai"
+  },
+  "homepage": "https://legal-hints.ai",
+  "repository": "https://github.com/mincua/legal-expert-plugin",
+  "license": "Proprietary",
+  "keywords": ["romanian-law", "legal-research", "contracts", "ocr", "excel"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Legal Expert",
+    "shortDescription": "Legal research, analysis, OCR, comparison, and Excel.",
+    "longDescription": "Helps Romanian legal professionals research LawDB and Legalpedia, manage document bundles, run Legal Expert's legal-review, OCR, contract-changes and signed-copy verification agents, review extracted events, configure notifications, and turn document sets into auditable Excel workbooks. Subscriber and tenant access is enforced by Legal Expert.",
+    "developerName": "Legal Expert",
+    "category": "Productivity",
+    "capabilities": [
+      "Search",
+      "Read",
+      "Write",
+      "Files",
+      "Spreadsheets"
+    ],
+    "websiteURL": "https://legal-hints.ai",
+    "privacyPolicyURL": "https://legal-hints.ai/privacy",
+    "termsOfServiceURL": "https://legal-hints.ai/terms",
+    "brandColor": "#6C4CF1",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png",
+    "defaultPrompt": [
+      "Research this Romanian legal question.",
+      "Analyze these legal documents and preserve source evidence.",
+      "Build an auditable Excel matrix from this document set."
+    ]
+  }
+}

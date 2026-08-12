@@ -1,0 +1,4 @@
+interface:
+  display_name: "Romanian Legal Research"
+  short_description: "Research Romanian law with sourced evidence"
+  default_prompt: "Use $research-romanian-law to research this Romanian legal question with current primary sources."

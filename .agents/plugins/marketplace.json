@@ -1,0 +1,20 @@
+{
+  "name": "legal-expert",
+  "interface": {
+    "displayName": "Legal Expert"
+  },
+  "plugins": [
+    {
+      "name": "legal-expert",
+      "source": {
+        "source": "local",
+        "path": "./plugins/legal-expert"
+      },
+      "policy": {
+        "installation": "NOT_AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
