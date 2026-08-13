@@ -1,4 +1,18 @@
-# Legal Expert pentru ChatGPT și Codex
+<p align="center">
+  <img src="plugins/legal-expert/assets/logo.png" width="112" alt="Legal Expert">
+</p>
+
+<h1 align="center">Legal Expert Marketplace</h1>
+
+<p align="center">
+  Cercetare juridică românească, documente, analiză, OCR și Excel — direct în ChatGPT și Codex.
+</p>
+
+<p align="center">
+  <a href="https://github.com/Legal-Expert/marketplace/actions/workflows/validate.yml"><img alt="Validare" src="https://github.com/Legal-Expert/marketplace/actions/workflows/validate.yml/badge.svg"></a>
+  <img alt="Versiune" src="https://img.shields.io/badge/version-0.3.0--beta.1-6C4CF1">
+  <img alt="OAuth" src="https://img.shields.io/badge/auth-OAuth%202.1-E05C8A">
+</p>
 
 Legal Expert ajută profesioniștii juridici să cerceteze legislația română, să organizeze documente, să analizeze contracte, să ruleze OCR, să compare documente și să construiască tabele Excel verificabile.
 
@@ -15,7 +29,7 @@ Backendul Legal Expert și serverul MCP rulează în cloud. Pe calculatorul clie
 În PowerShell:
 
 ```powershell
-codex plugin marketplace add mincua/legal-expert-plugin
+codex plugin marketplace add Legal-Expert/marketplace
 codex plugin add legal-expert@legal-expert
 ```
 
