@@ -14,6 +14,12 @@
   <img alt="OAuth" src="https://img.shields.io/badge/auth-OAuth%202.1-E05C8A">
 </p>
 
+<p align="center">
+  <a href="https://github.com/legal-expert-ai/marketplace/releases/latest/download/LegalExpertSetup.exe"><strong>Download Legal Expert for Windows</strong></a>
+  ·
+  <a href="INSTALL.md">How to install</a>
+</p>
+
 Legal Expert ajută profesioniștii juridici să cerceteze legislația română, să organizeze documente, să analizeze contracte, să ruleze OCR, să compare documente și să construiască tabele Excel verificabile.
 
 ## De ce aveți nevoie
@@ -26,7 +32,7 @@ Backendul Legal Expert și serverul MCP rulează în cloud. Pe calculatorul clie
 
 ## Instalare pe Windows
 
-Descărcați și rulați [LegalExpertSetup.exe](https://github.com/legal-expert-ai/marketplace/releases/latest/download/LegalExpertSetup.exe).
+Descărcați și rulați [LegalExpertSetup.exe](https://github.com/legal-expert-ai/marketplace/releases/latest/download/LegalExpertSetup.exe). Pentru instrucțiuni complete, consultați [How to install](INSTALL.md).
 
 Installerul face automat următoarele:
 
