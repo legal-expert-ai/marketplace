@@ -24,20 +24,35 @@ Legal Expert ajută profesioniștii juridici să cerceteze legislația română,
 
 Backendul Legal Expert și serverul MCP rulează în cloud. Pe calculatorul clientului se instalează doar pluginul cu skill-urile și conexiunea OAuth. Nu sunt necesare PHP, Docker, Node.js, Python sau un serviciu Legal Expert local.
 
-## Instalare beta pe Windows
+## Instalare pe Windows
+
+Descărcați și rulați [LegalExpertSetup.exe](https://github.com/legal-expert-ai/marketplace/releases/latest/download/LegalExpertSetup.exe).
+
+Installerul face automat următoarele:
+
+- instalează un Git portabil, verificat SHA-256, numai dacă Git lipsește;
+- configurează marketplace-ul oficial pe canalul `stable`;
+- instalează sau actualizează pluginul Legal Expert;
+- nu necesită drepturi de administrator.
+
+La final, închideți complet ChatGPT și deschideți-l din nou. Selectați Legal Expert și autentificați-vă în contul Legal Expert când apare fereastra OAuth.
+
+### Instalare manuală pentru administratori
 
 În PowerShell:
 
 ```powershell
-codex plugin marketplace add legal-expert-ai/marketplace
+codex plugin marketplace add legal-expert-ai/marketplace --ref stable
 codex plugin add legal-expert@legal-expert
 ```
-
-Deschideți apoi o conversație nouă, selectați Legal Expert și autentificați-vă în contul Legal Expert când apare fereastra OAuth.
 
 Canalul `main` livrează versiunea beta verificată automat pe Linux și Windows. Canalul `stable` este promovat numai după verificarea live a OAuth-ului și a tuturor tool-urilor MCP.
 
 ## Actualizare
+
+Rulați din nou `LegalExpertSetup.exe`. Installerul detectează configurația existentă și face upgrade automat.
+
+Pentru administratori, actualizarea manuală rămâne disponibilă:
 
 ```powershell
 codex plugin marketplace upgrade legal-expert
