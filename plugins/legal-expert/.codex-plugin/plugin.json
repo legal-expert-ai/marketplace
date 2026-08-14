@@ -1,6 +1,6 @@
 {
   "name": "legal-expert",
-  "version": "0.3.0-beta.1",
+  "version": "0.3.0-beta.2",
   "description": "Research Romanian law, manage subscribed document libraries, run legal analysis, OCR and comparison workflows, and build auditable Excel tables.",
   "author": {
     "name": "Legal Expert",
@@ -31,6 +31,9 @@
     "brandColor": "#6C4CF1",
     "composerIcon": "./assets/logo.png",
     "logo": "./assets/logo.png",
+    "screenshots": [
+      "./assets/product-overview.png"
+    ],
     "defaultPrompt": [
       "Research this Romanian legal question.",
       "Analyze these legal documents and preserve source evidence.",

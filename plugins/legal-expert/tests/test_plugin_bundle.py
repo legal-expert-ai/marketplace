@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import struct
 import unittest
 from pathlib import Path
 
@@ -37,7 +38,22 @@ class PluginBundleTest(unittest.TestCase):
 
     def test_manifest_uses_windows_oauth_release_semver(self) -> None:
         payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
-        self.assertEqual("0.3.0-beta.1", payload["version"])
+        self.assertEqual("0.3.0-beta.2", payload["version"])
+
+    def test_manifest_includes_a_valid_product_screenshot(self) -> None:
+        payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        screenshots = payload["interface"]["screenshots"]
+        self.assertEqual(["./assets/product-overview.png"], screenshots)
+
+        screenshot_path = ROOT / screenshots[0].removeprefix("./")
+        with screenshot_path.open("rb") as screenshot:
+            header = screenshot.read(24)
+        self.assertEqual(b"\x89PNG\r\n\x1a\n", header[:8])
+        width, height = struct.unpack(">II", header[16:24])
+        self.assertGreaterEqual(width, 1200)
+        self.assertGreaterEqual(height, 675)
+        self.assertGreaterEqual(width / height, 1.7)
+        self.assertLessEqual(width / height, 1.8)
 
     def test_all_skills_distinguish_connection_failures(self) -> None:
         validator = load_module(ROOT / "scripts" / "validate_plugin_bundle.py", "bundle_diagnostics_validator")

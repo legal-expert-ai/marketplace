@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import re
+import struct
 from pathlib import Path
 
 
@@ -124,6 +125,26 @@ def validate_plugin(root: Path = ROOT) -> list[str]:
         errors.append("plugin manifest version must use strict semantic versioning")
     elif not version.startswith("0.3.0"):
         errors.append("Windows OAuth release must use the 0.3.0 semantic version")
+
+    interface = manifest.get("interface")
+    screenshots = interface.get("screenshots") if isinstance(interface, dict) else None
+    if screenshots != ["./assets/product-overview.png"]:
+        errors.append("plugin manifest must declare the product overview screenshot")
+    else:
+        screenshot_path = root / "assets" / "product-overview.png"
+        try:
+            with screenshot_path.open("rb") as screenshot:
+                signature = screenshot.read(24)
+            if signature[:8] != b"\x89PNG\r\n\x1a\n" or len(signature) != 24:
+                errors.append("product overview screenshot must be a valid PNG")
+            else:
+                width, height = struct.unpack(">II", signature[16:24])
+                if width < 1200 or height < 675:
+                    errors.append("product overview screenshot must be at least 1200x675")
+                if not 1.7 <= width / height <= 1.8:
+                    errors.append("product overview screenshot must use a 16:9 landscape ratio")
+        except OSError:
+            errors.append("product overview screenshot is missing")
 
     mcp = load_json(root / ".mcp.json", errors)
     servers = mcp.get("mcpServers") if isinstance(mcp, dict) else None
