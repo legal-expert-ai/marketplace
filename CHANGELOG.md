@@ -1,11 +1,11 @@
 # Changelog
 
-## Windows installer 1.0.0
+## Windows installer 1.0.1
 
 - Added a one-click, per-user Windows installer.
 - Added a pinned and SHA-256-verified portable Git fallback for x64 and ARM64.
 - Added idempotent marketplace/plugin installation and upgrade behavior.
-- Added Windows installer smoke tests and release artifacts in GitHub Actions.
+- Added Windows installer smoke tests, including the no-Git fallback, and release artifacts in GitHub Actions.
 
 ## 0.3.0 - Unreleased
 

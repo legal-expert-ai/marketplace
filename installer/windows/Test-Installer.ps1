@@ -25,7 +25,7 @@ exit /b 0
     $env:LEGAL_EXPERT_TEST_COMMAND_LOG = $commandLog
     $env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT = "0"
 
-    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot (Join-Path $testRoot "install-new") -TestMode
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot (Join-Path $testRoot "install-new") -TestMode -ForcePortableGit
     if ($LASTEXITCODE -ne 0) {
         throw "Fresh-install smoke test failed."
     }

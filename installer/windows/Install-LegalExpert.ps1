@@ -1,14 +1,15 @@
 [CmdletBinding()]
 param(
     [string]$InstallRoot = (Join-Path $env:LOCALAPPDATA "Legal Expert"),
-    [switch]$TestMode
+    [switch]$TestMode,
+    [switch]$ForcePortableGit
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$InstallerVersion = "1.0.0"
+$InstallerVersion = "1.0.1"
 $MarketplaceName = "legal-expert"
 $MarketplaceSource = "legal-expert-ai/marketplace"
 $PluginSelector = "legal-expert@legal-expert"
@@ -79,10 +80,6 @@ function Install-PortableGit {
         return $gitExecutable
     }
 
-    if ($TestMode) {
-        throw "Git is required for the installer smoke test."
-    }
-
     Write-InstallerLog "Instalez componenta Git portabila pentru Legal Expert..."
     $downloadRoot = Join-Path $env:TEMP ("legal-expert-{0}" -f [Guid]::NewGuid().ToString("N"))
     $archivePath = Join-Path $downloadRoot "mingit.zip"
@@ -120,6 +117,10 @@ function Install-PortableGit {
 }
 
 function Resolve-GitExecutable {
+    if ($ForcePortableGit) {
+        return Install-PortableGit
+    }
+
     $command = Get-Command git.exe -ErrorAction SilentlyContinue
     if ($command) {
         return $command.Source
