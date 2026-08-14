@@ -7,7 +7,7 @@
     "url": "https://legal-hints.ai"
   },
   "homepage": "https://legal-hints.ai",
-  "repository": "https://github.com/Legal-Expert/marketplace",
+  "repository": "https://github.com/legal-expert-ai/marketplace",
   "license": "Proprietary",
   "keywords": ["romanian-law", "legal-research", "contracts", "ocr", "excel"],
   "skills": "./skills/",

@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Legal-Expert/marketplace/actions/workflows/validate.yml"><img alt="Validare" src="https://github.com/Legal-Expert/marketplace/actions/workflows/validate.yml/badge.svg"></a>
+  <a href="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml"><img alt="Validare" src="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml/badge.svg"></a>
   <img alt="Versiune" src="https://img.shields.io/badge/version-0.3.0--beta.1-6C4CF1">
   <img alt="OAuth" src="https://img.shields.io/badge/auth-OAuth%202.1-E05C8A">
 </p>
@@ -29,7 +29,7 @@ Backendul Legal Expert și serverul MCP rulează în cloud. Pe calculatorul clie
 În PowerShell:
 
 ```powershell
-codex plugin marketplace add Legal-Expert/marketplace
+codex plugin marketplace add legal-expert-ai/marketplace
 codex plugin add legal-expert@legal-expert
 ```
 
