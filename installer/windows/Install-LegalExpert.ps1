@@ -9,7 +9,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$InstallerVersion = "1.0.1"
+$InstallerVersion = "1.0.2"
 $MarketplaceName = "legal-expert"
 $MarketplaceSource = "legal-expert-ai/marketplace"
 $PluginSelector = "legal-expert@legal-expert"
@@ -21,6 +21,19 @@ function Write-InstallerLog {
     $line = "{0:u} {1}" -f (Get-Date), $Message
     Write-Host $Message
     Add-Content -LiteralPath $LogPath -Value $line -Encoding UTF8
+}
+
+function Write-InstallerProgress {
+    param(
+        [Parameter(Mandatory = $true)][ValidateRange(0, 100)][int]$Percent,
+        [Parameter(Mandatory = $true)][string]$Message
+    )
+
+    $safeMessage = $Message -replace '[|\r\n]', ' '
+    # Write directly to stdout so progress does not become part of a function's
+    # PowerShell return value (for example Resolve-GitExecutable).
+    [Console]::Out.WriteLine("LEGAL_EXPERT_PROGRESS|{0}|{1}" -f $Percent, $safeMessage)
+    Write-InstallerLog $safeMessage
 }
 
 function Add-ToUserPath {
@@ -76,11 +89,12 @@ function Install-PortableGit {
     $gitRoot = Join-Path $InstallRoot ("Git-{0}" -f $package.Version)
     $gitExecutable = Join-Path $gitRoot "cmd\git.exe"
     if (Test-Path -LiteralPath $gitExecutable -PathType Leaf) {
+        Write-InstallerProgress -Percent 20 -Message "Componenta Git este deja pregatita."
         Add-ToUserPath -Directory (Split-Path -Parent $gitExecutable)
         return $gitExecutable
     }
 
-    Write-InstallerLog "Instalez componenta Git portabila pentru Legal Expert..."
+    Write-InstallerProgress -Percent 15 -Message "Descarc componenta Git necesara..."
     $downloadRoot = Join-Path $env:TEMP ("legal-expert-{0}" -f [Guid]::NewGuid().ToString("N"))
     $archivePath = Join-Path $downloadRoot "mingit.zip"
     $stagingRoot = Join-Path $downloadRoot "expanded"
@@ -93,11 +107,13 @@ function Install-PortableGit {
             "User-Agent" = "LegalExpertInstaller/$InstallerVersion"
         }
 
+        Write-InstallerProgress -Percent 28 -Message "Verific integritatea componentei Git..."
         $actualHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
         if ($actualHash -ne $package.Sha256) {
             throw "The Git package checksum is invalid."
         }
 
+        Write-InstallerProgress -Percent 34 -Message "Pregatesc componenta Git..."
         Expand-Archive -LiteralPath $archivePath -DestinationPath $stagingRoot -Force
         $stagedGit = Join-Path $stagingRoot "cmd\git.exe"
         if (-not (Test-Path -LiteralPath $stagedGit -PathType Leaf)) {
@@ -106,6 +122,7 @@ function Install-PortableGit {
 
         New-Item -ItemType Directory -Path (Split-Path -Parent $gitRoot) -Force | Out-Null
         Move-Item -LiteralPath $stagingRoot -Destination $gitRoot
+        Write-InstallerProgress -Percent 42 -Message "Componenta Git este pregatita."
     } finally {
         if (Test-Path -LiteralPath $downloadRoot) {
             Remove-Item -LiteralPath $downloadRoot -Recurse -Force -ErrorAction SilentlyContinue
@@ -203,6 +220,7 @@ function Invoke-CodexCommand {
 function Install-LegalExpertPlugin {
     param([Parameter(Mandatory = $true)][string]$CodexExecutable)
 
+    Write-InstallerProgress -Percent 55 -Message "Verific marketplace-ul Legal Expert..."
     $marketplaceJson = Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
         "plugin", "marketplace", "list", "--json"
     )
@@ -210,18 +228,43 @@ function Install-LegalExpertPlugin {
     $isConfigured = @($marketplaces.marketplaces | Where-Object { $_.name -eq $MarketplaceName }).Count -gt 0
 
     if ($isConfigured) {
+        Write-InstallerProgress -Percent 65 -Message "Actualizez marketplace-ul Legal Expert..."
         Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
             "plugin", "marketplace", "upgrade", $MarketplaceName
         ) | Out-Null
     } else {
+        Write-InstallerProgress -Percent 65 -Message "Adaug marketplace-ul Legal Expert..."
         Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
             "plugin", "marketplace", "add", $MarketplaceSource, "--ref", "stable"
         ) | Out-Null
     }
 
+    Write-InstallerProgress -Percent 82 -Message "Instalez pluginul Legal Expert..."
     Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
         "plugin", "add", $PluginSelector
     ) | Out-Null
+}
+
+function Confirm-LegalExpertPlugin {
+    param([Parameter(Mandatory = $true)][string]$CodexExecutable)
+
+    $pluginJson = Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
+        "plugin", "list", "--json"
+    )
+    try {
+        $plugins = $pluginJson | ConvertFrom-Json
+    } catch {
+        throw "Codex did not return a valid plugin installation status."
+    }
+
+    $installedPlugin = @(
+        $plugins.installed | Where-Object {
+            $_.pluginId -eq $PluginSelector -and $_.installed -eq $true -and $_.enabled -eq $true
+        }
+    )
+    if ($installedPlugin.Count -ne 1) {
+        throw "Legal Expert is not reported as installed and enabled by Codex."
+    }
 }
 
 try {
@@ -229,14 +272,19 @@ try {
     Add-Content -LiteralPath $LogPath -Value "" -Encoding UTF8
     Write-InstallerLog "Legal Expert Setup $InstallerVersion"
 
+    Write-InstallerProgress -Percent 8 -Message "Verific dependintele necesare..."
     $gitExecutable = Resolve-GitExecutable
     Write-InstallerLog "Git disponibil: $gitExecutable"
 
+    Write-InstallerProgress -Percent 45 -Message "Verific runtime-ul ChatGPT Codex..."
     $codexExecutable = Resolve-CodexExecutable
     Write-InstallerLog "Runtime Codex disponibil."
     Install-LegalExpertPlugin -CodexExecutable $codexExecutable
 
+    Write-InstallerProgress -Percent 95 -Message "Finalizez si verific instalarea..."
+    Confirm-LegalExpertPlugin -CodexExecutable $codexExecutable
     Set-Content -LiteralPath (Join-Path $InstallRoot "install-complete.txt") -Value (Get-Date).ToString("O") -Encoding UTF8
+    Write-InstallerProgress -Percent 100 -Message "Legal Expert a fost instalat cu succes."
     Write-InstallerLog "Legal Expert a fost instalat. Inchideti si redeschideti ChatGPT."
     exit 0
 } catch {
