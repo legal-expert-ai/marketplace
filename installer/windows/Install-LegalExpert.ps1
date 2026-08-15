@@ -9,7 +9,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$InstallerVersion = "1.0.3"
+$InstallerVersion = "1.0.4"
 $MarketplaceName = "legal-expert"
 $MarketplaceSource = "legal-expert-ai/marketplace"
 $PluginSelector = "legal-expert@legal-expert"
@@ -265,6 +265,22 @@ function Get-LegalExpertMcpServers {
     return @($servers | Where-Object { $_.name -eq $McpServerName })
 }
 
+function Get-LegalExpertMcpUrl {
+    param([Parameter(Mandatory = $true)][object]$Server)
+
+    $transport = $Server.transport
+    if ($null -eq $transport) {
+        throw "The Legal Expert MCP server does not report a transport."
+    }
+
+    $url = $transport.url
+    if ([string]::IsNullOrWhiteSpace([string]$url)) {
+        throw "The Legal Expert MCP server does not report a URL."
+    }
+
+    return [string]$url
+}
+
 function Repair-LegalExpertMcpEndpoint {
     param([Parameter(Mandatory = $true)][string]$CodexExecutable)
 
@@ -275,7 +291,7 @@ function Repair-LegalExpertMcpEndpoint {
     if ($servers.Count -ne 1) {
         throw "Codex reported multiple Legal Expert MCP connections."
     }
-    if ([string]$servers[0].transport.url -eq $ProductionMcpUrl) {
+    if ((Get-LegalExpertMcpUrl -Server $servers[0]) -eq $ProductionMcpUrl) {
         return
     }
 
@@ -314,7 +330,7 @@ function Get-LegalExpertMcpStatus {
     if ($server.Count -ne 1 -or $server[0].enabled -ne $true) {
         throw "The Legal Expert MCP server is not configured and enabled."
     }
-    if ([string]$server[0].transport.url -ne $ProductionMcpUrl) {
+    if ((Get-LegalExpertMcpUrl -Server $server[0]) -ne $ProductionMcpUrl) {
         throw "The Legal Expert MCP server is not connected to production."
     }
 

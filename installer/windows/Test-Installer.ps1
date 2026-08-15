@@ -61,14 +61,14 @@ if "%1 %2 %3"=="plugin list --json" (
 if "%1 %2 %3"=="mcp list --json" (
   if exist "%LEGAL_EXPERT_TEST_MCP_RESET%" (
     if exist "%LEGAL_EXPERT_TEST_AUTH_STATE%" (
-      echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth","transport":{"type":"streamable_http","url":"https://api.legal-expert.ai/mcp"}}]
+      echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth","transport":{"type":"streamable_http","url":"https://api.legal-expert.ai/mcp"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
     ) else (
-      echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in","transport":{"type":"streamable_http","url":"https://api.legal-expert.ai/mcp"}}]
+      echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in","transport":{"type":"streamable_http","url":"https://api.legal-expert.ai/mcp"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
     )
   ) else if exist "%LEGAL_EXPERT_TEST_AUTH_STATE%" (
-    echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth","transport":{"type":"streamable_http","url":"%LEGAL_EXPERT_TEST_MCP_URL%"}}]
+    echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth","transport":{"type":"streamable_http","url":"%LEGAL_EXPERT_TEST_MCP_URL%"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
   ) else (
-    echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in","transport":{"type":"streamable_http","url":"%LEGAL_EXPERT_TEST_MCP_URL%"}}]
+    echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in","transport":{"type":"streamable_http","url":"%LEGAL_EXPERT_TEST_MCP_URL%"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
   )
 )
 if "%1 %2 %3"=="mcp remove legal-expert" type nul > "%LEGAL_EXPERT_TEST_MCP_RESET%"
