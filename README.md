@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml"><img alt="Validare" src="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml/badge.svg"></a>
+  <a href="https://github.com/legal-expert-ai/marketplace/actions/workflows/release-installer.yml"><img alt="Windows installer release" src="https://github.com/legal-expert-ai/marketplace/actions/workflows/release-installer.yml/badge.svg"></a>
   <img alt="Versiune" src="https://img.shields.io/badge/version-0.3.0-6C4CF1">
   <img alt="OAuth" src="https://img.shields.io/badge/auth-OAuth%202.1-E05C8A">
 </p>
@@ -41,6 +42,10 @@ Installerul face automat următoarele:
 - instalează sau actualizează pluginul Legal Expert;
 - deschide autentificarea OAuth Legal Expert în browser și verifică finalizarea ei;
 - nu necesită drepturi de administrator.
+
+Buildurile de release sunt semnate Authenticode și publicate automat din taguri
+`installer-vMAJOR.MINOR.PATCH`. Detaliile operaționale sunt în
+[ghidul de signing și release](docs/windows-installer-release.md).
 
 La final, închideți complet ChatGPT din system tray folosind `Quit`/`Exit`, apoi deschideți-l din nou. Simplul click pe `X` nu închide întotdeauna aplicația și poate păstra vechiul PATH și vechea listă de pluginuri.
 

@@ -1,4 +1,6 @@
-#define InstallerVersion "1.0.4"
+#ifndef InstallerVersion
+  #define InstallerVersion "1.0.4"
+#endif
 
 [Setup]
 AppId={{AE258957-F55B-4702-A8A3-1A1DD5D9C10F}
@@ -7,6 +9,11 @@ AppVersion={#InstallerVersion}
 AppPublisher=Legal Expert
 AppPublisherURL=https://legal-hints.ai
 AppSupportURL=https://github.com/legal-expert-ai/marketplace/blob/main/SUPPORT.md
+VersionInfoCompany=Legal Expert
+VersionInfoDescription=Legal Expert Plugin Installer
+VersionInfoProductName=Legal Expert Plugin
+VersionInfoProductVersion={#InstallerVersion}
+VersionInfoVersion={#InstallerVersion}
 DefaultDirName={localappdata}\Legal Expert
 DisableDirPage=yes
 DisableProgramGroupPage=yes
@@ -71,7 +78,7 @@ begin
   PowerShellPath := ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe');
   Parameters := '-NoProfile -ExecutionPolicy Bypass -File "' +
     ExpandConstant('{app}\Install-LegalExpert.ps1') + '" -InstallRoot "' +
-    ExpandConstant('{app}') + '"';
+    ExpandConstant('{app}') + '" -InstallerVersion "{#InstallerVersion}"';
 
   if (not ExecAndLogOutput(
        PowerShellPath,
