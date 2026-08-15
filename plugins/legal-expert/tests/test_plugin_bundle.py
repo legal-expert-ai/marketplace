@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 import struct
 import unittest
@@ -38,7 +39,19 @@ class PluginBundleTest(unittest.TestCase):
 
     def test_manifest_uses_windows_oauth_release_semver(self) -> None:
         payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
-        self.assertEqual("0.3.0", payload["version"])
+        self.assertEqual("0.3.1", payload["version"])
+
+    def test_manifest_and_logo_use_legal_expert_branding(self) -> None:
+        payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        self.assertEqual("https://legal-expert.ai", payload["homepage"])
+        self.assertEqual("https://legal-expert.ai", payload["author"]["url"])
+        self.assertEqual("https://legal-expert.ai", payload["interface"]["websiteURL"])
+        self.assertEqual("#9B3EF7", payload["interface"]["brandColor"])
+        logo = (ROOT / "assets" / "logo.png").read_bytes()
+        self.assertEqual(
+            "c0515ed073a989385aec18d70f47952d619859968cb98e4e9831647116b42384",
+            hashlib.sha256(logo).hexdigest(),
+        )
 
     def test_manifest_includes_a_valid_product_screenshot(self) -> None:
         payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))

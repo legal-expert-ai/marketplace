@@ -9,7 +9,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$InstallerVersion = "1.0.4"
+$InstallerVersion = "1.0.5"
 $MarketplaceName = "legal-expert"
 $MarketplaceSource = "legal-expert-ai/marketplace"
 $PluginSelector = "legal-expert@legal-expert"
@@ -345,11 +345,18 @@ function Get-LegalExpertMcpStatus {
     return [string]($server[0].auth_status)
 }
 
+function Test-LegalExpertMcpAuthenticated {
+    param([Parameter(Mandatory = $true)][string]$AuthStatus)
+
+    # Codex versions in the wild have reported both spellings.
+    return $AuthStatus -in @("oauth", "o_auth", "bearer_token", "logged_in")
+}
+
 function Connect-LegalExpertMcp {
     param([Parameter(Mandatory = $true)][string]$CodexExecutable)
 
     $authStatus = Get-LegalExpertMcpStatus -CodexExecutable $CodexExecutable
-    if ($authStatus -in @("oauth", "bearer_token", "logged_in")) {
+    if (Test-LegalExpertMcpAuthenticated -AuthStatus $authStatus) {
         Write-InstallerProgress -Percent 90 -Message "Autentificarea Legal Expert este deja activa."
         return
     }
@@ -363,7 +370,7 @@ function Connect-LegalExpertMcp {
     ) | Out-Null
 
     $authStatus = Get-LegalExpertMcpStatus -CodexExecutable $CodexExecutable
-    if ($authStatus -notin @("oauth", "bearer_token", "logged_in")) {
+    if (-not (Test-LegalExpertMcpAuthenticated -AuthStatus $authStatus)) {
         throw "Legal Expert OAuth authentication was not completed."
     }
 }

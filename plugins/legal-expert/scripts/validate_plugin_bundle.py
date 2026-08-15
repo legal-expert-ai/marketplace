@@ -123,8 +123,8 @@ def validate_plugin(root: Path = ROOT) -> list[str]:
     version = manifest.get("version")
     if not isinstance(version, str) or SEMVER_PATTERN.fullmatch(version) is None:
         errors.append("plugin manifest version must use strict semantic versioning")
-    elif not version.startswith("0.3.0"):
-        errors.append("Windows OAuth release must use the 0.3.0 semantic version")
+    elif version != "0.3.1":
+        errors.append("branded Windows OAuth release must use semantic version 0.3.1")
 
     interface = manifest.get("interface")
     screenshots = interface.get("screenshots") if isinstance(interface, dict) else None

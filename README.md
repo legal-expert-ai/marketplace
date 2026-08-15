@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="plugins/legal-expert/assets/logo.png" width="112" alt="Legal Expert">
+  <img src="plugins/legal-expert/assets/logo-wordmark.png" width="360" alt="Legal Expert AI">
 </p>
 
 <h1 align="center">Legal Expert Marketplace</h1>
@@ -10,8 +10,8 @@
 
 <p align="center">
   <a href="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml"><img alt="Validare" src="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml/badge.svg"></a>
-  <img alt="Versiune" src="https://img.shields.io/badge/version-0.3.0-6C4CF1">
-  <img alt="OAuth" src="https://img.shields.io/badge/auth-OAuth%202.1-E05C8A">
+  <img alt="Versiune" src="https://img.shields.io/badge/version-0.3.1-9B3EF7">
+  <img alt="OAuth" src="https://img.shields.io/badge/auth-OAuth%202.1-9B3EF7">
 </p>
 
 <p align="center">
@@ -74,6 +74,6 @@ Modificările compatibile ale tool-urilor MCP sunt livrate server-side și nu ne
 
 - [Politica de confidențialitate](https://legal-hints.ai/privacy)
 - [Termeni și condiții](https://legal-hints.ai/terms)
-- [Legal Expert](https://legal-hints.ai)
+- [Legal Expert](https://legal-expert.ai)
 
 Legal Expert oferă suport pentru cercetare și analiză juridică, nu înlocuiește verificarea și judecata profesională.

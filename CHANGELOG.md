@@ -1,5 +1,21 @@
 # Changelog
 
+## Windows installer 1.0.5
+
+- Accepts Codex's `o_auth` status after a successful browser callback.
+- Adds branded Legal Expert welcome, progress, and completion screens.
+- Uses the official `legal-expert.ai` logo, icon, palette, and publisher URL.
+
+## Windows installer 1.0.4
+
+- Correctly parses top-level MCP arrays returned by Windows PowerShell 5.1.
+- Handles other configured MCP servers whose transports do not expose a URL.
+
+## 0.3.1 - 2026-08-15
+
+- Replaced the legacy Legal Hints icon and links with official Legal Expert branding.
+- Added the official Legal Expert wordmark and brand color.
+
 ## Windows installer 1.0.3
 
 - Replaces stale preview MCP connections with `https://api.legal-expert.ai/mcp` during upgrades.

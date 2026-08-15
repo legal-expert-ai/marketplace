@@ -1,21 +1,28 @@
-#define InstallerVersion "1.0.4"
+#define InstallerVersion "1.0.5"
 
 [Setup]
 AppId={{AE258957-F55B-4702-A8A3-1A1DD5D9C10F}
-AppName=Legal Expert Plugin
+AppName=Legal Expert for ChatGPT
 AppVersion={#InstallerVersion}
+AppVerName=Legal Expert for ChatGPT {#InstallerVersion}
 AppPublisher=Legal Expert
-AppPublisherURL=https://legal-hints.ai
+AppPublisherURL=https://legal-expert.ai
 AppSupportURL=https://github.com/legal-expert-ai/marketplace/blob/main/SUPPORT.md
+AppUpdatesURL=https://github.com/legal-expert-ai/marketplace/releases/latest
 DefaultDirName={localappdata}\Legal Expert
 DisableDirPage=yes
 DisableProgramGroupPage=yes
+DisableWelcomePage=no
+DisableFinishedPage=no
 PrivilegesRequired=lowest
 ChangesEnvironment=yes
 Uninstallable=no
 OutputDir=..\..\dist
 OutputBaseFilename=LegalExpertSetup
 SetupIconFile=..\..\plugins\legal-expert\assets\logo.ico
+WizardImageFile=assets\wizard-background.png
+WizardSmallImageFile=..\..\plugins\legal-expert\assets\logo.png
+WizardImageStretch=yes
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
@@ -24,6 +31,21 @@ WizardStyle=modern
 Source: "Install-LegalExpert.ps1"; DestDir: "{app}"; Flags: ignoreversion
 
 [Code]
+procedure InitializeWizard;
+begin
+  WizardForm.Caption := 'Legal Expert pentru ChatGPT';
+  WizardForm.WelcomeLabel1.Caption := 'Legal Expert pentru ChatGPT';
+  WizardForm.WelcomeLabel2.Caption :=
+    'Cercetare juridica, analiza de documente si workflow-uri Legal Expert,' + #13#10 +
+    'direct in ChatGPT. Instalarea include conexiunea securizata OAuth.';
+  WizardForm.FinishedHeadingLabel.Caption := 'Legal Expert este pregatit';
+  WizardForm.FinishedLabel.Caption :=
+    'Pluginul si conexiunea securizata au fost instalate.' + #13#10 + #13#10 +
+    'Inchideti complet ChatGPT din system tray, apoi deschideti aplicatia din nou.';
+  WizardForm.PageNameLabel.Font.Color := $00F73E9B;
+  WizardForm.StatusLabel.Font.Color := $00F73E9B;
+end;
+
 procedure InstallerOutput(const S: String; const Error, FirstLine: Boolean);
 var
   Payload: String;

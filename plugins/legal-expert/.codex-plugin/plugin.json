@@ -1,12 +1,12 @@
 {
   "name": "legal-expert",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Research Romanian law, manage subscribed document libraries, run legal analysis, OCR and comparison workflows, and build auditable Excel tables.",
   "author": {
     "name": "Legal Expert",
-    "url": "https://legal-hints.ai"
+    "url": "https://legal-expert.ai"
   },
-  "homepage": "https://legal-hints.ai",
+  "homepage": "https://legal-expert.ai",
   "repository": "https://github.com/legal-expert-ai/marketplace",
   "license": "Proprietary",
   "keywords": ["romanian-law", "legal-research", "contracts", "ocr", "excel"],
@@ -25,10 +25,10 @@
       "Files",
       "Spreadsheets"
     ],
-    "websiteURL": "https://legal-hints.ai",
+    "websiteURL": "https://legal-expert.ai",
     "privacyPolicyURL": "https://legal-hints.ai/privacy",
     "termsOfServiceURL": "https://legal-hints.ai/terms",
-    "brandColor": "#6C4CF1",
+    "brandColor": "#9B3EF7",
     "composerIcon": "./assets/logo.png",
     "logo": "./assets/logo.png",
     "screenshots": [
