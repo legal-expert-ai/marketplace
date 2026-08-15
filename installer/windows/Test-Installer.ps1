@@ -29,6 +29,21 @@ function Assert-ProgressSequence {
     }
 }
 
+function Write-SmokeFailureDiagnostics {
+    param(
+        [Parameter(Mandatory = $true)][object[]]$Output,
+        [Parameter(Mandatory = $true)][string]$InstallRoot
+    )
+
+    Write-Host "Installer process output:"
+    $Output | ForEach-Object { Write-Host ([string]$_) }
+    $installerLog = Join-Path $InstallRoot "installer.log"
+    if (Test-Path -LiteralPath $installerLog -PathType Leaf) {
+        Write-Host "Installer log:"
+        Get-Content -LiteralPath $installerLog | ForEach-Object { Write-Host $_ }
+    }
+}
+
 try {
     @'
 @echo off
@@ -50,8 +65,10 @@ exit /b 0
     $env:LEGAL_EXPERT_TEST_COMMAND_LOG = $commandLog
     $env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT = "0"
 
-    $freshOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot (Join-Path $testRoot "install-new") -TestMode -ForcePortableGit)
+    $freshInstallRoot = Join-Path $testRoot "install-new"
+    $freshOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot $freshInstallRoot -TestMode -ForcePortableGit)
     if ($LASTEXITCODE -ne 0) {
+        Write-SmokeFailureDiagnostics -Output $freshOutput -InstallRoot $freshInstallRoot
         throw "Fresh-install smoke test failed."
     }
     Assert-ProgressSequence -Output $freshOutput
@@ -68,8 +85,10 @@ exit /b 0
 
     Clear-Content -LiteralPath $commandLog
     $env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT = "1"
-    $upgradeOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot (Join-Path $testRoot "install-update") -TestMode)
+    $upgradeInstallRoot = Join-Path $testRoot "install-update"
+    $upgradeOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot $upgradeInstallRoot -TestMode)
     if ($LASTEXITCODE -ne 0) {
+        Write-SmokeFailureDiagnostics -Output $upgradeOutput -InstallRoot $upgradeInstallRoot
         throw "Upgrade smoke test failed."
     }
     Assert-ProgressSequence -Output $upgradeOutput
