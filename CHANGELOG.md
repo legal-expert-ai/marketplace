@@ -1,5 +1,11 @@
 # Changelog
 
+## Windows installer 1.0.3
+
+- Replaces stale preview MCP connections with `https://api.legal-expert.ai/mcp` during upgrades.
+- Preserves an existing OAuth session when the configured Legal Expert MCP endpoint is already production.
+- Verifies the production MCP URL before reporting installation success.
+
 ## Windows installer 1.0.2
 
 - Added the native Legal Expert OAuth login and verification flow to installation and upgrades.

@@ -9,11 +9,12 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$InstallerVersion = "1.0.2"
+$InstallerVersion = "1.0.3"
 $MarketplaceName = "legal-expert"
 $MarketplaceSource = "legal-expert-ai/marketplace"
 $PluginSelector = "legal-expert@legal-expert"
 $McpServerName = "legal-expert"
+$ProductionMcpUrl = "https://api.legal-expert.ai/mcp"
 $McpOAuthScopes = "openid,profile,email,offline_access"
 $LogPath = Join-Path $InstallRoot "installer.log"
 
@@ -241,9 +242,46 @@ function Install-LegalExpertPlugin {
         ) | Out-Null
     }
 
+    Repair-LegalExpertMcpEndpoint -CodexExecutable $CodexExecutable
+
     Write-InstallerProgress -Percent 82 -Message "Instalez pluginul Legal Expert..."
     Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
         "plugin", "add", $PluginSelector
+    ) | Out-Null
+}
+
+function Get-LegalExpertMcpServers {
+    param([Parameter(Mandatory = $true)][string]$CodexExecutable)
+
+    $mcpJson = Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
+        "mcp", "list", "--json"
+    )
+    try {
+        $servers = @($mcpJson | ConvertFrom-Json)
+    } catch {
+        throw "Codex did not return a valid MCP connection status."
+    }
+
+    return @($servers | Where-Object { $_.name -eq $McpServerName })
+}
+
+function Repair-LegalExpertMcpEndpoint {
+    param([Parameter(Mandatory = $true)][string]$CodexExecutable)
+
+    $servers = @(Get-LegalExpertMcpServers -CodexExecutable $CodexExecutable)
+    if ($servers.Count -eq 0) {
+        return
+    }
+    if ($servers.Count -ne 1) {
+        throw "Codex reported multiple Legal Expert MCP connections."
+    }
+    if ([string]$servers[0].transport.url -eq $ProductionMcpUrl) {
+        return
+    }
+
+    Write-InstallerProgress -Percent 75 -Message "Inlocuiesc vechea conexiune Legal Expert cu productia..."
+    Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
+        "mcp", "remove", $McpServerName
     ) | Out-Null
 }
 
@@ -272,18 +310,12 @@ function Confirm-LegalExpertPlugin {
 function Get-LegalExpertMcpStatus {
     param([Parameter(Mandatory = $true)][string]$CodexExecutable)
 
-    $mcpJson = Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
-        "mcp", "list", "--json"
-    )
-    try {
-        $servers = @($mcpJson | ConvertFrom-Json)
-    } catch {
-        throw "Codex did not return a valid MCP connection status."
-    }
-
-    $server = @($servers | Where-Object { $_.name -eq $McpServerName })
+    $server = @(Get-LegalExpertMcpServers -CodexExecutable $CodexExecutable)
     if ($server.Count -ne 1 -or $server[0].enabled -ne $true) {
         throw "The Legal Expert MCP server is not configured and enabled."
+    }
+    if ([string]$server[0].transport.url -ne $ProductionMcpUrl) {
+        throw "The Legal Expert MCP server is not connected to production."
     }
 
     return [string]($server[0].auth_status)
