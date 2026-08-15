@@ -28,17 +28,17 @@ class PluginBundleTest(unittest.TestCase):
         self.assertIn("legal-tabular-research", skill_names)
         self.assertNotIn("build-legal-research-table", skill_names)
 
-    def test_mcp_uses_native_oauth_http_and_fails_closed_without_production_url(self) -> None:
+    def test_mcp_uses_native_oauth_http_on_production(self) -> None:
         payload = json.loads((ROOT / ".mcp.json").read_text(encoding="utf-8"))
         server = payload["mcpServers"]["legal-expert"]
         self.assertEqual({"type", "url"}, set(server))
         self.assertEqual("http", server["type"])
-        self.assertEqual("https://legal-expert-backend-feat-public-mcp-agent-tasks.docker.d.com.ro/mcp", server["url"])
+        self.assertEqual("https://api.legal-expert.ai/mcp", server["url"])
         self.assertFalse((ROOT / "scripts" / "mcp_http_bridge.py").exists())
 
     def test_manifest_uses_windows_oauth_release_semver(self) -> None:
         payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
-        self.assertEqual("0.3.0-beta.2", payload["version"])
+        self.assertEqual("0.3.0", payload["version"])
 
     def test_manifest_includes_a_valid_product_screenshot(self) -> None:
         payload = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
@@ -81,6 +81,14 @@ class PluginBundleTest(unittest.TestCase):
             self.assertIn(tool, text)
         for tool in validator.STALE_TOOL_NAMES:
             self.assertNotIn(tool, text)
+
+    def test_notification_preferences_use_global_scope(self) -> None:
+        skill_text = (ROOT / "skills" / "manage-legal-library" / "SKILL.md").read_text(encoding="utf-8")
+        contract_text = (
+            ROOT / "skills" / "manage-legal-library" / "references" / "document-tool-contracts.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn('get_notification_preferences` with `scope: "global"', skill_text)
+        self.assertIn('get_notification_preferences(scope="global")', contract_text)
 
     def test_agent_output_skills_route_text_and_binary_content(self) -> None:
         validator = load_module(ROOT / "scripts" / "validate_plugin_bundle.py", "bundle_output_validator")

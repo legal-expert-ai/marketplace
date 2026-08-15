@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml"><img alt="Validare" src="https://github.com/legal-expert-ai/marketplace/actions/workflows/validate.yml/badge.svg"></a>
   <a href="https://github.com/legal-expert-ai/marketplace/actions/workflows/release-installer.yml"><img alt="Windows installer release" src="https://github.com/legal-expert-ai/marketplace/actions/workflows/release-installer.yml/badge.svg"></a>
-  <img alt="Versiune" src="https://img.shields.io/badge/version-0.3.0--beta.1-6C4CF1">
+  <img alt="Versiune" src="https://img.shields.io/badge/version-0.3.0-6C4CF1">
   <img alt="OAuth" src="https://img.shields.io/badge/auth-OAuth%202.1-E05C8A">
 </p>
 

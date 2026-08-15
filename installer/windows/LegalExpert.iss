@@ -1,5 +1,5 @@
 #ifndef InstallerVersion
-  #define InstallerVersion "0.0.0"
+  #define InstallerVersion "1.0.4"
 #endif
 
 [Setup]

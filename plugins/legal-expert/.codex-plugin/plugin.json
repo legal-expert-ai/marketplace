@@ -1,6 +1,6 @@
 {
   "name": "legal-expert",
-  "version": "0.3.0-beta.2",
+  "version": "0.3.0",
   "description": "Research Romanian law, manage subscribed document libraries, run legal analysis, OCR and comparison workflows, and build auditable Excel tables.",
   "author": {
     "name": "Legal Expert",

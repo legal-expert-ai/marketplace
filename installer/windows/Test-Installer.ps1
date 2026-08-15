@@ -59,12 +59,19 @@ if "%1 %2 %3"=="plugin list --json" (
   echo {"installed":[{"pluginId":"legal-expert@legal-expert","installed":true,"enabled":true}]}
 )
 if "%1 %2 %3"=="mcp list --json" (
-  if exist "%LEGAL_EXPERT_TEST_AUTH_STATE%" (
-    echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth"}]
+  if exist "%LEGAL_EXPERT_TEST_MCP_RESET%" (
+    if exist "%LEGAL_EXPERT_TEST_AUTH_STATE%" (
+      echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth","transport":{"type":"streamable_http","url":"https://api.legal-expert.ai/mcp"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
+    ) else (
+      echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in","transport":{"type":"streamable_http","url":"https://api.legal-expert.ai/mcp"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
+    )
+  ) else if exist "%LEGAL_EXPERT_TEST_AUTH_STATE%" (
+    echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth","transport":{"type":"streamable_http","url":"%LEGAL_EXPERT_TEST_MCP_URL%"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
   ) else (
-    echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in"}]
+    echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in","transport":{"type":"streamable_http","url":"%LEGAL_EXPERT_TEST_MCP_URL%"}},{"name":"node_repl","enabled":true,"auth_status":"unsupported","transport":{"type":"stdio","command":"node_repl.exe"}}]
   )
 )
+if "%1 %2 %3"=="mcp remove legal-expert" type nul > "%LEGAL_EXPERT_TEST_MCP_RESET%"
 if "%1 %2 %3"=="mcp login legal-expert" (
   type nul > "%LEGAL_EXPERT_TEST_AUTH_STATE%"
   echo OAuth login completed.
@@ -76,6 +83,8 @@ exit /b 0
     $env:LEGAL_EXPERT_TEST_COMMAND_LOG = $commandLog
     $env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT = "0"
     $env:LEGAL_EXPERT_TEST_AUTH_STATE = Join-Path $testRoot "oauth-authenticated"
+    $env:LEGAL_EXPERT_TEST_MCP_RESET = Join-Path $testRoot "mcp-reset"
+    $env:LEGAL_EXPERT_TEST_MCP_URL = "https://api.legal-expert.ai/mcp"
 
     $freshInstallRoot = Join-Path $testRoot "install-new"
     $freshOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot $freshInstallRoot -TestMode -ForcePortableGit)
@@ -100,9 +109,14 @@ exit /b 0
     if ($freshCommands -notmatch "mcp list --json") {
         throw "Fresh install did not verify MCP authentication."
     }
+    if ($freshCommands -match "mcp remove legal-expert") {
+        throw "Fresh install unexpectedly replaced a production MCP connection."
+    }
 
     Clear-Content -LiteralPath $commandLog
+    Remove-Item -LiteralPath $env:LEGAL_EXPERT_TEST_MCP_RESET -Force -ErrorAction SilentlyContinue
     $env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT = "1"
+    $env:LEGAL_EXPERT_TEST_MCP_URL = "https://legal-expert-preview.invalid/mcp"
     $upgradeInstallRoot = Join-Path $testRoot "install-update"
     $upgradeOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot $upgradeInstallRoot -TestMode)
     if ($LASTEXITCODE -ne 0) {
@@ -114,6 +128,9 @@ exit /b 0
     if ($upgradeCommands -notmatch "plugin marketplace upgrade legal-expert") {
         throw "Existing installations were not upgraded."
     }
+    if ($upgradeCommands -notmatch "mcp remove legal-expert") {
+        throw "Upgrade did not replace the stale preview MCP connection."
+    }
 
     Write-Host "Windows installer smoke tests passed."
 } finally {
@@ -121,5 +138,7 @@ exit /b 0
     Remove-Item Env:LEGAL_EXPERT_TEST_COMMAND_LOG -ErrorAction SilentlyContinue
     Remove-Item Env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT -ErrorAction SilentlyContinue
     Remove-Item Env:LEGAL_EXPERT_TEST_AUTH_STATE -ErrorAction SilentlyContinue
+    Remove-Item Env:LEGAL_EXPERT_TEST_MCP_RESET -ErrorAction SilentlyContinue
+    Remove-Item Env:LEGAL_EXPERT_TEST_MCP_URL -ErrorAction SilentlyContinue
     Remove-Item -LiteralPath $testRoot -Recurse -Force -ErrorAction SilentlyContinue
 }
