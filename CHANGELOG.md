@@ -1,5 +1,10 @@
 # Changelog
 
+## Windows installer 1.0.6
+
+- Includes the OAuth-status and Legal Expert branding changes from 1.0.5.
+- Normalizes the Windows version-resource value before signed-release verification.
+
 ## Windows installer 1.0.5
 
 - Accepts Codex's `o_auth` status after a successful browser callback.

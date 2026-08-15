@@ -87,7 +87,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             throw "Inno Setup failed with exit code $LASTEXITCODE."
           }
-          $productVersion = (Get-Item -LiteralPath "dist\LegalExpertSetup.exe").VersionInfo.ProductVersion
+          $productVersion = (Get-Item -LiteralPath "dist\LegalExpertSetup.exe").VersionInfo.ProductVersion.Trim()
           if ($productVersion -ne $env:INSTALLER_VERSION) {
             throw "Built installer version '$productVersion' does not match tag version '$env:INSTALLER_VERSION'."
           }

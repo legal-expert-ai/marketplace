@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$InstallRoot = (Join-Path $env:LOCALAPPDATA "Legal Expert"),
-    [string]$InstallerVersion = "1.0.5",
+    [string]$InstallerVersion = "1.0.6",
     [switch]$TestMode,
     [switch]$ForcePortableGit
 )
