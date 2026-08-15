@@ -82,6 +82,14 @@ class PluginBundleTest(unittest.TestCase):
         for tool in validator.STALE_TOOL_NAMES:
             self.assertNotIn(tool, text)
 
+    def test_notification_preferences_use_global_scope(self) -> None:
+        skill_text = (ROOT / "skills" / "manage-legal-library" / "SKILL.md").read_text(encoding="utf-8")
+        contract_text = (
+            ROOT / "skills" / "manage-legal-library" / "references" / "document-tool-contracts.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn('get_notification_preferences` with `scope: "global"', skill_text)
+        self.assertIn('get_notification_preferences(scope="global")', contract_text)
+
     def test_agent_output_skills_route_text_and_binary_content(self) -> None:
         validator = load_module(ROOT / "scripts" / "validate_plugin_bundle.py", "bundle_output_validator")
         for skill_name in validator.OUTPUT_READER_SKILLS:

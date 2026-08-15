@@ -62,7 +62,7 @@ Use `list_agent_task_outputs` to find visible artifacts and `get_agent_task_outp
 
 Notification preferences are global for the Legal Expert account, not per bundle or event.
 
-1. Call `get_notification_preferences` and, when useful, `list_document_events` so the user can understand the account-wide effect.
+1. Call `get_notification_preferences` with `scope: "global"` and, when useful, `list_document_events` so the user can understand the account-wide effect.
 2. State that enabling or disabling email/WhatsApp applies globally to eligible document-event reminders.
 3. Require explicit confirmation before any global channel change.
 4. Call `update_notification_preferences` with only the confirmed `email` and/or `whatsapp` booleans.

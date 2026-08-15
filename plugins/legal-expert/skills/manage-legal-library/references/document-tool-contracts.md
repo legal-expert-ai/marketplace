@@ -12,7 +12,7 @@ Call only tools advertised by the connected server. Every tool is tenant-scoped 
 - `list_document_events(bundle_id?, offset=0, limit=25)` returns extracted events/deadlines; maximum limit 100.
 - `read_agent_task_output_content(task_id, output_id, offset=0, limit=12000)` reads visible UTF-8 output content; maximum character limit 20,000. Use `list_agent_task_outputs` and `get_agent_task_output` first.
 - `read_agent_task_output_base64(task_id, output_id, byte_offset=0, byte_limit=196608)` reads any visible artifact as a bounded base64 byte chunk; maximum byte limit 262,144. It returns `filename`, `mime_type`, `encoding: "base64"`, `content_base64`, the full-file `sha256`, `total_bytes`, and `next_byte_offset`.
-- `get_notification_preferences()` returns global email/WhatsApp settings, verification state, masked phone, and consent timestamp.
+- `get_notification_preferences(scope="global")` returns global email/WhatsApp settings, verification state, masked phone, and consent timestamp. The scope is optional server-side for backward compatibility, but passing it keeps the remote tool visible in current Codex clients.
 
 Read tools have `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, and `openWorldHint: false`.
 
