@@ -13,6 +13,8 @@ $InstallerVersion = "1.0.2"
 $MarketplaceName = "legal-expert"
 $MarketplaceSource = "legal-expert-ai/marketplace"
 $PluginSelector = "legal-expert@legal-expert"
+$McpServerName = "legal-expert"
+$McpOAuthScopes = "openid,profile,email,offline_access"
 $LogPath = Join-Path $InstallRoot "installer.log"
 
 function Write-InstallerLog {
@@ -267,6 +269,49 @@ function Confirm-LegalExpertPlugin {
     }
 }
 
+function Get-LegalExpertMcpStatus {
+    param([Parameter(Mandatory = $true)][string]$CodexExecutable)
+
+    $mcpJson = Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
+        "mcp", "list", "--json"
+    )
+    try {
+        $servers = @($mcpJson | ConvertFrom-Json)
+    } catch {
+        throw "Codex did not return a valid MCP connection status."
+    }
+
+    $server = @($servers | Where-Object { $_.name -eq $McpServerName })
+    if ($server.Count -ne 1 -or $server[0].enabled -ne $true) {
+        throw "The Legal Expert MCP server is not configured and enabled."
+    }
+
+    return [string]($server[0].auth_status)
+}
+
+function Connect-LegalExpertMcp {
+    param([Parameter(Mandatory = $true)][string]$CodexExecutable)
+
+    $authStatus = Get-LegalExpertMcpStatus -CodexExecutable $CodexExecutable
+    if ($authStatus -in @("oauth", "bearer_token", "logged_in")) {
+        Write-InstallerProgress -Percent 90 -Message "Autentificarea Legal Expert este deja activa."
+        return
+    }
+    if ($authStatus -ne "not_logged_in") {
+        throw "The Legal Expert MCP server does not advertise a supported OAuth login flow."
+    }
+
+    Write-InstallerProgress -Percent 90 -Message "Autentificati-va in fereastra Legal Expert deschisa in browser..."
+    Invoke-CodexCommand -CodexExecutable $CodexExecutable -Arguments @(
+        "mcp", "login", $McpServerName, "--scopes", $McpOAuthScopes
+    ) | Out-Null
+
+    $authStatus = Get-LegalExpertMcpStatus -CodexExecutable $CodexExecutable
+    if ($authStatus -notin @("oauth", "bearer_token", "logged_in")) {
+        throw "Legal Expert OAuth authentication was not completed."
+    }
+}
+
 try {
     New-Item -ItemType Directory -Path $InstallRoot -Force | Out-Null
     Add-Content -LiteralPath $LogPath -Value "" -Encoding UTF8
@@ -280,8 +325,9 @@ try {
     $codexExecutable = Resolve-CodexExecutable
     Write-InstallerLog "Runtime Codex disponibil."
     Install-LegalExpertPlugin -CodexExecutable $codexExecutable
+    Connect-LegalExpertMcp -CodexExecutable $codexExecutable
 
-    Write-InstallerProgress -Percent 95 -Message "Finalizez si verific instalarea..."
+    Write-InstallerProgress -Percent 96 -Message "Finalizez si verific instalarea..."
     Confirm-LegalExpertPlugin -CodexExecutable $codexExecutable
     Set-Content -LiteralPath (Join-Path $InstallRoot "install-complete.txt") -Value (Get-Date).ToString("O") -Encoding UTF8
     Write-InstallerProgress -Percent 100 -Message "Legal Expert a fost instalat cu succes."

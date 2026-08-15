@@ -58,12 +58,24 @@ if "%1 %2 %3"=="plugin marketplace list" (
 if "%1 %2 %3"=="plugin list --json" (
   echo {"installed":[{"pluginId":"legal-expert@legal-expert","installed":true,"enabled":true}]}
 )
+if "%1 %2 %3"=="mcp list --json" (
+  if exist "%LEGAL_EXPERT_TEST_AUTH_STATE%" (
+    echo [{"name":"legal-expert","enabled":true,"auth_status":"oauth"}]
+  ) else (
+    echo [{"name":"legal-expert","enabled":true,"auth_status":"not_logged_in"}]
+  )
+)
+if "%1 %2 %3"=="mcp login legal-expert" (
+  type nul > "%LEGAL_EXPERT_TEST_AUTH_STATE%"
+  echo OAuth login completed.
+)
 exit /b 0
 '@ | Set-Content -LiteralPath $fakeCodex -Encoding ASCII
 
     $env:CODEX_EXE = $fakeCodex
     $env:LEGAL_EXPERT_TEST_COMMAND_LOG = $commandLog
     $env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT = "0"
+    $env:LEGAL_EXPERT_TEST_AUTH_STATE = Join-Path $testRoot "oauth-authenticated"
 
     $freshInstallRoot = Join-Path $testRoot "install-new"
     $freshOutput = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -InstallRoot $freshInstallRoot -TestMode -ForcePortableGit)
@@ -81,6 +93,12 @@ exit /b 0
     }
     if ($freshCommands -notmatch "plugin list --json") {
         throw "Fresh install did not verify the installed plugin."
+    }
+    if ($freshCommands -notmatch "mcp login legal-expert --scopes openid,profile,email,offline_access") {
+        throw "Fresh install did not start the Legal Expert OAuth flow."
+    }
+    if ($freshCommands -notmatch "mcp list --json") {
+        throw "Fresh install did not verify MCP authentication."
     }
 
     Clear-Content -LiteralPath $commandLog
@@ -102,5 +120,6 @@ exit /b 0
     Remove-Item Env:CODEX_EXE -ErrorAction SilentlyContinue
     Remove-Item Env:LEGAL_EXPERT_TEST_COMMAND_LOG -ErrorAction SilentlyContinue
     Remove-Item Env:LEGAL_EXPERT_TEST_MARKETPLACE_PRESENT -ErrorAction SilentlyContinue
+    Remove-Item Env:LEGAL_EXPERT_TEST_AUTH_STATE -ErrorAction SilentlyContinue
     Remove-Item -LiteralPath $testRoot -Recurse -Force -ErrorAction SilentlyContinue
 }

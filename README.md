@@ -39,9 +39,10 @@ Installerul face automat următoarele:
 - instalează un Git portabil, verificat SHA-256, numai dacă Git lipsește;
 - configurează marketplace-ul oficial pe canalul `stable`;
 - instalează sau actualizează pluginul Legal Expert;
+- deschide autentificarea OAuth Legal Expert în browser și verifică finalizarea ei;
 - nu necesită drepturi de administrator.
 
-La final, închideți complet ChatGPT și deschideți-l din nou. Selectați Legal Expert și autentificați-vă în contul Legal Expert când apare fereastra OAuth.
+La final, închideți complet ChatGPT din system tray folosind `Quit`/`Exit`, apoi deschideți-l din nou. Simplul click pe `X` nu închide întotdeauna aplicația și poate păstra vechiul PATH și vechea listă de pluginuri.
 
 ### Instalare manuală pentru administratori
 
