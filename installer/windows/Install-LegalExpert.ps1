@@ -257,7 +257,15 @@ function Get-LegalExpertMcpServers {
         "mcp", "list", "--json"
     )
     try {
-        $servers = @($mcpJson | ConvertFrom-Json)
+        # Windows PowerShell 5.1 emits a top-level JSON array as one Object[]
+        # pipeline item. Materialize it first, then enumerate it explicitly so
+        # each MCP server is filtered independently.
+        $parsedServers = $mcpJson | ConvertFrom-Json
+        $servers = @(
+            foreach ($parsedServer in $parsedServers) {
+                $parsedServer
+            }
+        )
     } catch {
         throw "Codex did not return a valid MCP connection status."
     }
