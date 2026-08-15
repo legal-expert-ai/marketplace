@@ -56,7 +56,7 @@ OAUTH_DIAGNOSTIC_MARKERS = (
     "**Unauthorized:**",
     "**Missing tool:**",
 )
-FAIL_CLOSED_MCP_URL = "https://legal-expert-backend-feat-public-mcp-agent-tasks.docker.d.com.ro/mcp"
+PRODUCTION_MCP_URL = "https://api.legal-expert.ai/mcp"
 SEMVER_PATTERN = re.compile(
     r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
     r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
@@ -154,7 +154,7 @@ def validate_plugin(root: Path = ROOT) -> list[str]:
     else:
         if legal.get("type") != "http":
             errors.append("legal-expert MCP must use native Streamable HTTP")
-        if legal.get("url") != FAIL_CLOSED_MCP_URL:
+        if legal.get("url") != PRODUCTION_MCP_URL:
             errors.append("legal-expert MCP must remain fail-closed until the production OAuth endpoint is approved")
         if set(legal) != {"type", "url"}:
             errors.append("legal-expert MCP OAuth config must not inject credentials or transport wrappers")

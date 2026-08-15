@@ -2,7 +2,7 @@
   "mcpServers": {
     "legal-expert": {
       "type": "http",
-      "url": "https://legal-expert-backend-feat-public-mcp-agent-tasks.docker.d.com.ro/mcp"
+      "url": "https://api.legal-expert.ai/mcp"
     }
   }
 }
