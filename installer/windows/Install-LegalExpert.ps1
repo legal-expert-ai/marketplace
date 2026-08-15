@@ -32,7 +32,7 @@ function Write-InstallerProgress {
     $safeMessage = $Message -replace '[|\r\n]', ' '
     # Write directly to stdout so progress does not become part of a function's
     # PowerShell return value (for example Resolve-GitExecutable).
-    [Console]::Out.WriteLine("LEGAL_EXPERT_PROGRESS|{0}|{1}" -f $Percent, $safeMessage)
+    [Console]::Out.WriteLine(("LEGAL_EXPERT_PROGRESS|{0}|{1}" -f $Percent, $safeMessage))
     Write-InstallerLog $safeMessage
 }
 
