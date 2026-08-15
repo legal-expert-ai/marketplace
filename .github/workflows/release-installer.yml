@@ -1,0 +1,174 @@
+name: Release Windows installer
+
+on:
+  push:
+    tags:
+      - "installer-v*"
+
+concurrency:
+  group: windows-installer-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Validate release tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Determine installer version
+        id: version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF_NAME" =~ ^installer-v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "version=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Installer tags must use installer-vMAJOR.MINOR.PATCH. Received: $GITHUB_REF_NAME" >&2
+            exit 1
+          fi
+
+  test:
+    name: Test on ${{ matrix.os }}
+    needs: prepare
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-2025]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - name: Validate plugin bundle
+        run: python plugins/legal-expert/scripts/validate_plugin_bundle.py
+      - name: Run plugin tests
+        run: python -m unittest discover -s plugins/legal-expert/tests -v
+      - name: Test installer bootstrap
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File installer/windows/Test-Installer.ps1
+
+  release:
+    name: Build, sign and publish
+    needs: [prepare, test]
+    runs-on: windows-2025
+    timeout-minutes: 30
+    environment: windows-signing
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Inno Setup
+        shell: powershell
+        run: choco install innosetup --version=6.7.1 --no-progress -y
+
+      - name: Build installer
+        shell: powershell
+        env:
+          INSTALLER_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            "/DInstallerVersion=$env:INSTALLER_VERSION" `
+            "installer\windows\LegalExpert.iss"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup failed with exit code $LASTEXITCODE."
+          }
+          $productVersion = (Get-Item -LiteralPath "dist\LegalExpertSetup.exe").VersionInfo.ProductVersion
+          if ($productVersion -ne $env:INSTALLER_VERSION) {
+            throw "Built installer version '$productVersion' does not match tag version '$env:INSTALLER_VERSION'."
+          }
+
+      - name: Sign in to Azure with GitHub OIDC
+        uses: azure/login@f5d393ae46f8fde4be8b75f32e3fc50e654ad0ca # v3.0.1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Sign installer with Azure Artifact Signing
+        uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
+        with:
+          endpoint: ${{ vars.AZURE_ARTIFACT_SIGNING_ENDPOINT }}
+          signing-account-name: ${{ vars.AZURE_ARTIFACT_SIGNING_ACCOUNT_NAME }}
+          certificate-profile-name: ${{ vars.AZURE_ARTIFACT_SIGNING_CERTIFICATE_PROFILE_NAME }}
+          files: ${{ github.workspace }}\dist\LegalExpertSetup.exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+          description: Legal Expert Plugin Installer
+          description-url: https://github.com/legal-expert-ai/marketplace
+          correlation-id: ${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Verify Authenticode signature and create checksum
+        shell: powershell
+        run: |
+          $installer = "dist\LegalExpertSetup.exe"
+          $signature = Get-AuthenticodeSignature -LiteralPath $installer
+          if ($signature.Status -ne "Valid") {
+            throw "Authenticode verification failed: $($signature.Status) - $($signature.StatusMessage)"
+          }
+          if (-not $signature.SignerCertificate) {
+            throw "The installer has no Authenticode signer certificate."
+          }
+          if (-not $signature.TimeStamperCertificate) {
+            throw "The installer signature has no trusted timestamp."
+          }
+          Write-Host "Signer: $($signature.SignerCertificate.Subject)"
+          Write-Host "Certificate thumbprint: $($signature.SignerCertificate.Thumbprint)"
+          $hash = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  LegalExpertSetup.exe" | Set-Content dist\LegalExpertSetup.exe.sha256 -Encoding ASCII
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/LegalExpertSetup.exe
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: LegalExpertSetup-${{ needs.prepare.outputs.version }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            dist/LegalExpertSetup.exe
+            dist/LegalExpertSetup.exe.sha256
+
+      - name: Publish GitHub release
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INSTALLER_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          $assets = @(
+            "dist/LegalExpertSetup.exe#LegalExpertSetup.exe",
+            "dist/LegalExpertSetup.exe.sha256#LegalExpertSetup.exe.sha256"
+          )
+          $title = "Legal Expert Windows Installer $env:INSTALLER_VERSION"
+          gh release view $env:GITHUB_REF_NAME *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:GITHUB_REF_NAME @assets --clobber
+            if ($LASTEXITCODE -ne 0) { throw "Could not update release assets." }
+            gh release edit $env:GITHUB_REF_NAME --title $title --latest
+            if ($LASTEXITCODE -ne 0) { throw "Could not update the release." }
+          } else {
+            gh release create $env:GITHUB_REF_NAME @assets `
+              --verify-tag `
+              --title $title `
+              --generate-notes `
+              --latest
+            if ($LASTEXITCODE -ne 0) { throw "Could not create the release." }
+          }

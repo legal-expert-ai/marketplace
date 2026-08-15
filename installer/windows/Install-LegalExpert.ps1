@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$InstallRoot = (Join-Path $env:LOCALAPPDATA "Legal Expert"),
+    [string]$InstallerVersion = "0.0.0-development",
     [switch]$TestMode,
     [switch]$ForcePortableGit
 )
@@ -9,7 +10,6 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$InstallerVersion = "1.0.2"
 $MarketplaceName = "legal-expert"
 $MarketplaceSource = "legal-expert-ai/marketplace"
 $PluginSelector = "legal-expert@legal-expert"
